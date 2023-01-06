@@ -6,19 +6,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'localhost',
-    port: 33066,
-    username: 'root',
-    password: 'root',
-    database: 'test',
-    autoLoadEntities: true,
-    synchronize: true,
-  }),
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'phpmyadmin',
+      password: '13ySnCOyM83M',
+      database: 'test',
+      autoLoadEntities: true,
+      synchronize: true,
+    }),
     UserModule,
-    ProductsModule],
+    ProductsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

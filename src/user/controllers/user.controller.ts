@@ -1,20 +1,27 @@
-import { BadRequestException, Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+} from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from 'src/user/dto/create.user.dto';
-import { User } from '../models/user';
 import * as bcrypt from 'bcryptjs';
 import { LoginDto } from 'src/user/dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
 
-@Controller("auth")
+@Controller('auth')
 export class UserController {
-  constructor(private readonly userService: UserService, private jwtService: JwtService) { }
+  constructor(
+    private readonly userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
-  @Post("register")
+  @Post('register')
   async register(@Body() user: CreateUserDto) {
     if (await this.userService.exist(user)) {
-      throw new BadRequestException("User already exist, please login");
+      throw new BadRequestException('User already exist, please login');
     }
     const { password_confirm, ...data } = user;
 
@@ -26,34 +33,34 @@ export class UserController {
 
     return this.userService.saveAll({
       ...data,
-      password: hashed
+      password: hashed,
     });
   }
 
-  @Post("login")
+  @Post('login')
   async login(@Body() body: LoginDto) {
-    var email = body.email;
-    let user = await this.userService.findOneByEmail(email);
+    const email = body.email;
+    const user = await this.userService.findOneByEmail(email);
     if (!user) {
-      throw new BadRequestException("User not exists, please register");
+      throw new BadRequestException('User not exists, please register');
     }
 
     const hashed = await bcrypt.compare(body.password, user.password);
     if (hashed) {
-      const access_token = await this.jwtService.signAsync({...user})
-      return { message: "Successfully logged in.", access_token };
+      const jwt = await this.jwtService.signAsync({ ...user });
+      return { message: 'Successfully logged in.', jwt };
     } else {
-      throw new BadRequestException("Invalid Credentials.");
+      throw new BadRequestException('Invalid Credentials.');
     }
   }
 
-  @Get("all")
+  @Get('all')
   all() {
     return this.userService.findAll();
   }
 
-  @Get("clear")
+  @Get('clear')
   clear() {
     return this.userService.deleteAll();
   }
-} 
+}
