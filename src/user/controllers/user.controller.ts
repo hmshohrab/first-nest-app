@@ -40,8 +40,8 @@ export class UserController {
 
     const hashed = await bcrypt.compare(body.password, user.password);
     if (hashed) {
-      const jwt = await this.jwtService.signAsync({...user})
-      return { message: "Successfully logged in.", jwt };
+      const access_token = await this.jwtService.signAsync({...user})
+      return { message: "Successfully logged in.", access_token };
     } else {
       throw new BadRequestException("Invalid Credentials.");
     }
